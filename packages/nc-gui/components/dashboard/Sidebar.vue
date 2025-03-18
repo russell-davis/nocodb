@@ -61,6 +61,7 @@ onUnmounted(() => {
       <DashboardSidebarBeforeUserInfo />
       <DashboardSidebarFeed v-if="appInfo.feedEnabled" />
       <DashboardSidebarUserInfo />
+      <DashboardSidebarVersion v-if="appInfo.isOnPrem" />
     </div>
   </div>
 </template>
