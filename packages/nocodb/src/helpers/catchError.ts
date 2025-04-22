@@ -737,6 +737,10 @@ const errorHelpers: {
     message: (message: string) => message || 'Plan limit exceeded',
     code: 403,
   },
+  [NcErrorType.BASE_USER_ERROR]: {
+    message: (message: string) => message || 'Something went wrong',
+    code: 400,
+  },
 };
 
 function generateError(
@@ -1148,6 +1152,12 @@ export class NcError {
         ...details,
         ...(details?.plan ? { higherPlan: HigherPlan[details.plan] } : {}),
       },
+    });
+  }
+  static baseUserError(message: string, args?: NcErrorArgs) {
+    throw new NcBaseErrorv2(NcErrorType.BASE_USER_ADD_ERROR, {
+      params: message,
+      ...args,
     });
   }
 }
