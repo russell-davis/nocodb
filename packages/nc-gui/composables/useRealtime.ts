@@ -17,10 +17,12 @@ const useRealtime = createSharedComposable(() => {
     }
     if (newBaseId) {
       $realtime.subscribe('nc', newBaseId)
+      await metadataManager.bootstrap('nc', newBaseId)
     }
   })
 
-  $realtime.on((e) => {
+  $realtime.on(async (e) => {
+    await metadataManager.applyEvent(e)
     console.log(e)
   })
 

@@ -122,6 +122,7 @@ import { OldDatasController } from '~/controllers/old-datas/old-datas.controller
 import { OldDatasService } from '~/controllers/old-datas/old-datas.service';
 import { PublicDatasExportController } from '~/controllers/public-datas-export.controller';
 import { PublicDatasController } from '~/controllers/public-datas.controller';
+import { RealtimeController } from '~/controllers/realtime.controller';
 import { BaseUsersV3Controller } from '~/controllers/v3/base-users-v3.controller';
 import { BasesV3Controller } from '~/controllers/v3/bases-v3.controller';
 import { ColumnsV3Controller } from '~/controllers/v3/columns-v3.controller';
@@ -214,6 +215,7 @@ export const nocoModuleMetadata = {
           ExtensionsController,
           JobsMetaController,
           IntegrationsController,
+          RealtimeController,
 
           /* V3 APIs */
           BasesV3Controller,

@@ -68,7 +68,6 @@ const TABLE_SCHEMAS: { [key: string]: z.ZodSchema } = {
   [MetaTable.COL_LONG_TEXT]: ncColLongTextV2Schema,
   [MetaTable.FILTER_EXP]: ncFilterExpV2Schema,
   [MetaTable.SORT]: ncSortV2Schema,
-  [MetaTable.SHARED_VIEWS]: ncSharedViewsV2Schema,
   [MetaTable.FORM_VIEW]: ncFormViewV2Schema,
   [MetaTable.FORM_VIEW_COLUMNS]: ncFormViewColumnsV2Schema,
   [MetaTable.GALLERY_VIEW]: ncGalleryViewV2Schema,
@@ -88,11 +87,47 @@ const TABLE_SCHEMAS: { [key: string]: z.ZodSchema } = {
   [MetaTable.MAP_VIEW_COLUMNS]: ncMapViewColumnsV2Schema,
   [MetaTable.EXTENSIONS]: ncExtensionsSchema,
   [MetaTable.JOBS]: ncJobsSchema,
-  [MetaTable.INTEGRATIONS]: ncIntegrationsV2Schema,
   [MetaTable.COL_BUTTON]: ncColButtonV2Schema,
-  [MetaTable.DATA_REFLECTION]: ncDataReflectionSchema,
   [MetaTable.SYNC_CONFIGS]: ncSyncConfigsSchema,
   sync_metadata: syncMetadataSchema,
+}
+
+export const SyncTables = {
+  PROJECT: 'nc_bases_v2',
+  SOURCES: 'nc_sources_v2',
+  MODELS: 'nc_models_v2',
+  COLUMNS: 'nc_columns_v2',
+  COL_RELATIONS: 'nc_col_relations_v2',
+  COL_SELECT_OPTIONS: 'nc_col_select_options_v2',
+  COL_LOOKUP: 'nc_col_lookup_v2',
+  COL_ROLLUP: 'nc_col_rollup_v2',
+  COL_FORMULA: 'nc_col_formula_v2',
+  COL_QRCODE: 'nc_col_qrcode_v2',
+  COL_BARCODE: 'nc_col_barcode_v2',
+  COL_LONG_TEXT: 'nc_col_long_text_v2',
+  FILTER_EXP: 'nc_filter_exp_v2',
+  SORT: 'nc_sort_v2',
+  FORM_VIEW: 'nc_form_view_v2',
+  FORM_VIEW_COLUMNS: 'nc_form_view_columns_v2',
+  GALLERY_VIEW: 'nc_gallery_view_v2',
+  GALLERY_VIEW_COLUMNS: 'nc_gallery_view_columns_v2',
+  CALENDAR_VIEW: 'nc_calendar_view_v2',
+  CALENDAR_VIEW_COLUMNS: 'nc_calendar_view_columns_v2',
+  CALENDAR_VIEW_RANGE: 'nc_calendar_view_range_v2',
+  GRID_VIEW: 'nc_grid_view_v2',
+  GRID_VIEW_COLUMNS: 'nc_grid_view_columns_v2',
+  KANBAN_VIEW: 'nc_kanban_view_v2',
+  KANBAN_VIEW_COLUMNS: 'nc_kanban_view_columns_v2',
+  VIEWS: 'nc_views_v2',
+  HOOKS: 'nc_hooks_v2',
+  PROJECT_USERS: 'nc_base_users_v2',
+  MODEL_ROLE_VISIBILITY: 'nc_disabled_models_for_role_v2',
+  MAP_VIEW: 'nc_map_view_v2',
+  MAP_VIEW_COLUMNS: 'nc_map_view_columns_v2',
+  EXTENSIONS: 'nc_extensions',
+  JOBS: 'nc_jobs',
+  COL_BUTTON: 'nc_col_button_v2',
+  SYNC_CONFIGS: 'nc_sync_configs',
 }
 
 export class MetadataManager {
@@ -112,18 +147,22 @@ export class MetadataManager {
 
   async bootstrap(workspace_id: string, base_id: string) {
     try {
-      const response = await fetch(`/api/metadata?workspace_id=${workspace_id}&base_id=${base_id}`)
-      const records = await response.json()
-
-      for (const table of Object.keys(TABLE_SCHEMAS)) {
+      const { $api } = useNuxtApp()
+      console.log($api)
+      const res = await $api.base.bootstrap(base_id)
+      for (const table of Object.values(SyncTables)) {
         if (table === 'sync_metadata') continue
-        const tableRecords = records.filter((r: any) => r.table_name === table)
-        await instance(table).where({ base_id }).delete()
-        if (tableRecords.length > 0) {
+        const tableRecords = res.filter((r: any) => r.table === table)
+        if (!['nc_bases_v2'].includes(table)) {
+          await instance(table).where({ base_id }).delete()
+        }
+        if (tableRecords?.records?.length > 0) {
           const batchSize = 1000
-          for (let i = 0; i < tableRecords.length; i += batchSize) {
-            await instance(table).insert(tableRecords.slice(i, i + batchSize))
+          for (let i = 0; i < tableRecords?.records.length; i += batchSize) {
+            await instance(table).insert(tableRecords?.records.slice(i, i + batchSize))
           }
+        } else {
+          console.warn(`No records found for table: ${table}`)
         }
       }
     } catch (err) {

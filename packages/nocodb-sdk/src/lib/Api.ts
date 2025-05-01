@@ -6775,6 +6775,32 @@ export class Api<
       }),
 
     /**
+ * @description Bootstrap all tables in a given Base
+ * 
+ * @tags Base
+ * @name Bootstrap
+ * @summary Bootstrap Base
+ * @request GET:/api/v2/meta/bootstrap/:baseId
+ * @response `400` `{
+  \** @example BadRequest [Error]: <ERROR MESSAGE> *\
+  msg: string,
+
+}`
+ */
+    bootstrap: (baseId: string, params: RequestParams = {}) =>
+      this.request<
+        any,
+        {
+          /** @example BadRequest [Error]: <ERROR MESSAGE> */
+          msg: string;
+        }
+      >({
+        path: `/api/v2/meta/bootstrap/${baseId}`,
+        method: 'GET',
+        ...params,
+      }),
+
+    /**
  * @description Duplicate a shared base
  * 
  * @tags Base

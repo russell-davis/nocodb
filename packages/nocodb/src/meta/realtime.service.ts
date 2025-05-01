@@ -12,6 +12,7 @@ import type { NcContext, NcRequest } from 'nocodb-sdk';
 import type { OnModuleInit } from '@nestjs/common';
 import { PubSubRedis } from '~/redis/pubsub-redis';
 import Noco from '~/Noco';
+import { SyncTables } from '~/utils/globals';
 
 const url = new URL(
   process.env.NC_PUBLIC_URL ||
@@ -187,7 +188,27 @@ export class RealtimeService implements OnModuleInit {
     }
   }
 
-  async bootstrap(context: NcContext, req: NcRequest) {}
+  async bootstrap(context: NcContext, req: NcRequest) {
+    const { workspace_id, base_id } = context;
+
+    const results = [];
+
+    try {
+      for (const table of Object.values(SyncTables)) {
+        const list = await Noco.ncMeta.metaList2(workspace_id, base_id, table);
+
+        results.push({
+          table,
+          records: list,
+        });
+      }
+
+      return results;
+    } catch (error) {
+      this.logger.error('Bootstrap failed:', error);
+      throw new Error('Bootstrap failed');
+    }
+  }
 
   public get io() {
     return this._io;
