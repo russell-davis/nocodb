@@ -378,7 +378,7 @@ export class FieldHandler implements IFieldHandler {
     return column;
   }
 
-  async parseValue(params: {
+  async parseUserInput(params: {
     value: any;
     row: any;
     column: Column;
@@ -393,7 +393,7 @@ export class FieldHandler implements IFieldHandler {
 
     const handler = this.getHandler(params.column.uidt, dbClientType);
     if (handler) {
-      return handler.parseValue(params);
+      return handler.parseUserInput(params);
     } else {
       return { value: params.value };
     }
