@@ -514,7 +514,7 @@ describe('dataApiV3', () => {
           ],
           status: 422,
         });
-        expect(response.body.error).to.eq('DATABASE_ERROR');
+        expect(response.body.error).to.eq('INVALID_VALUE_FOR_FIELD');
         expect(
           response.body.message.startsWith(`Invalid value 'HELLOW' for type `),
         ).to.eq(true);
@@ -532,7 +532,7 @@ describe('dataApiV3', () => {
           ],
           status: 422,
         });
-        expect(response.body.error).to.eq('DATABASE_ERROR');
+        expect(response.body.error).to.eq('INVALID_VALUE_FOR_FIELD');
         expect(
           response.body.message.startsWith(`Invalid value 'HELLOW' for type `),
         ).to.eq(true);
@@ -570,7 +570,7 @@ describe('dataApiV3', () => {
           ],
           status: 422,
         });
-        expect(response.body.error).to.eq('DATABASE_ERROR');
+        expect(response.body.error).to.eq('INVALID_VALUE_FOR_FIELD');
         expect(
           response.body.message.startsWith(`Invalid value 'HELLOW' for type `),
         ).to.eq(true);
@@ -618,7 +618,7 @@ describe('dataApiV3', () => {
           ],
           status: 422,
         });
-        expect(response.body.error).to.eq('DATABASE_ERROR');
+        expect(response.body.error).to.eq('INVALID_VALUE_FOR_FIELD');
         expect(
           response.body.message.startsWith(`The date / time value is invalid`),
         ).to.eq(true);
