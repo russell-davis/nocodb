@@ -565,7 +565,6 @@ const up = async (knex: Knex) => {
     table.string('fk_user_id', 20);
     table.string('roles', 255);
     table.timestamps(true, true);
-    table.primary(['fk_org_id']);
   });
 
   await knex.schema.createTable(MetaTable.MODEL_STAT, (table) => {
