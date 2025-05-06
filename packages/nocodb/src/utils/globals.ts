@@ -80,6 +80,8 @@ export enum MetaTable {
   ORG_DOMAIN = 'nc_org_domain',
   ORG = 'nc_org',
   ORG_USERS = 'nc_org_users',
+  PLANS = 'nc_plans',
+  SUBSCRIPTIONS = 'nc_subscriptions',
 }
 
 export enum MetaTableOldV2 {
