@@ -240,8 +240,8 @@ export class FieldHandler implements IFieldHandler {
     options: HandlerOptions = {},
   ): Promise<(qb: Knex.QueryBuilder) => void> {
     const knex = options.knex ?? this.info.knex;
-    // TODO: check for custom knex and use get client from there
-    const dbClient = knex.client.config.client as ClientType;
+    const dbClient = (knex.clientType?.() ??
+      knex.client.config.client) as ClientType;
     const handler = this.getHandler(column.uidt, dbClient);
     const useColumn =
       column ??
@@ -316,8 +316,8 @@ export class FieldHandler implements IFieldHandler {
     options: HandlerOptions = {},
   ): Promise<void> {
     const knex = options.knex ?? this.info.knex;
-    // TODO: check for custom knex and use get client from there
-    const dbClient = knex.client.config.client as ClientType;
+    const dbClient = (knex.clientType?.() ??
+      knex.client.config.client) as ClientType;
     const handler = this.getHandler(column.uidt, dbClient);
     return handler.select(qb, column, {
       knex,
@@ -420,19 +420,27 @@ export class FieldHandler implements IFieldHandler {
     value: any;
     row: any;
     column: Column;
-    baseModel: IBaseModelSqlV2;
     options?: {
       context?: NcContext;
       metaService?: MetaService;
       logger?: Logger;
+      baseModel?: IBaseModelSqlV2;
     };
   }): Promise<{ value: any }> {
-    // TODO: check for custom knex and use get client from there
-    const dbClientType = params.baseModel.dbDriver.client.config.client;
+    const baseModel = params.options?.baseModel ?? this.info.baseModel;
+    const knex = baseModel.dbDriver;
+    const dbClientType = (knex.clientType?.() ??
+      knex.client.config.client) as ClientType;
 
     const handler = this.getHandler(params.column.uidt, dbClientType);
     if (handler) {
-      return handler.parseUserInput(params);
+      return handler.parseUserInput({
+        ...params,
+        options: {
+          baseModel: this.info.baseModel,
+          ...params.options,
+        },
+      });
     } else {
       return { value: params.value };
     }
@@ -442,8 +450,8 @@ export class FieldHandler implements IFieldHandler {
     value: any;
     row: any;
     column: Column;
-    baseModel: IBaseModelSqlV2;
     options?: {
+      baseModel?: IBaseModelSqlV2;
       context?: NcContext;
       metaService?: MetaService;
       logger?: Logger;
@@ -452,12 +460,20 @@ export class FieldHandler implements IFieldHandler {
     // since it's possible for it to be knex query, which
     // can be executed when awaited
   }): Promise<{ value: any }> {
-    // TODO: check for custom knex and use get client from there
-    const dbClientType = params.baseModel.dbDriver.client.config.client;
+    const baseModel = params.options?.baseModel ?? this.info.baseModel;
+    const knex = baseModel.dbDriver;
+    const dbClientType = (knex.clientType?.() ??
+      knex.client.config.client) as ClientType;
 
     const handler = this.getHandler(params.column.uidt, dbClientType);
     if (handler) {
-      return handler.parseDbValue(params);
+      return handler.parseDbValue({
+        ...params,
+        options: {
+          baseModel: this.info.baseModel,
+          ...params.options,
+        },
+      });
     } else {
       return { value: params.value };
     }
@@ -479,8 +495,9 @@ export class FieldHandler implements IFieldHandler {
     const baseModel = params.options?.baseModel ?? this.info.baseModel;
     const context =
       params.options?.context ?? this.info.context ?? baseModel.context;
-    // TODO: check for custom knex and use get client from there
-    const dbClientType = baseModel.dbDriver.client.config.client;
+    const knex = baseModel.dbDriver;
+    const dbClientType = (knex.clientType?.() ??
+      knex.client.config.client) as ClientType;
     const data = Array.isArray(params.data) ? params.data : [params.data];
     for (const column of (await baseModel.model.getColumns(context)).concat(
       params.options?.additionalColumns || [],
@@ -493,9 +510,12 @@ export class FieldHandler implements IFieldHandler {
               await handler.parseDbValue({
                 value: row[column.id],
                 row,
-                baseModel: baseModel,
                 column,
-                options: { ...params.options, fieldHandler: this },
+                options: {
+                  baseModel: this.info.baseModel,
+                  ...params.options,
+                  fieldHandler: this,
+                },
               })
             ).value;
           }
@@ -504,9 +524,12 @@ export class FieldHandler implements IFieldHandler {
               await handler.parseDbValue({
                 value: row[column.title],
                 row,
-                baseModel: baseModel,
                 column,
-                options: { ...params.options, fieldHandler: this },
+                options: {
+                  baseModel: this.info.baseModel,
+                  ...params.options,
+                  fieldHandler: this,
+                },
               })
             ).value;
           } else if (
