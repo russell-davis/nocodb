@@ -186,12 +186,13 @@ export class MetaService {
         migrationSource: new XcMigrationSourcev2(),
         tableName: 'xc_knex_migrationsv2',
       });
-    } else {
-      await this.connection.migrate.latest({
-        migrationSource: new XcMigrationSourcev0(),
-        tableName: 'xc_knex_migrationsv0',
-      });
     }
+
+    await this.connection.migrate.latest({
+      migrationSource: new XcMigrationSourcev0(),
+      tableName: 'xc_knex_migrationsv0',
+    });
+
     return true;
   }
 

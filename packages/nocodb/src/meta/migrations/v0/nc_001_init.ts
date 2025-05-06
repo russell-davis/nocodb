@@ -2,6 +2,13 @@ import type { Knex } from 'knex';
 import { MetaTable } from '~/utils/globals';
 
 const up = async (knex: Knex) => {
+  // We avoid init for existing instances
+  // They will be unified via packages/nocodb/src/meta/migrations/v2/nc_079_unify_schema.ts
+  if (await knex.schema.hasTable('xc_knex_migrations')) {
+    console.log('Skipping v0 migration for existing instance.');
+    return;
+  }
+
   await knex.schema.createTable(MetaTable.API_TOKENS, (table) => {
     table.increments('id').primary();
     table.string('base_id', 20);
