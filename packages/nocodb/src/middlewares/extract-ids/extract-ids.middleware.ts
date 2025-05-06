@@ -629,6 +629,13 @@ export class AclMiddleware implements NestInterceptor {
       }
     }
 
+    // assign owner role to super admin for all bases
+    if (userScopeRole === OrgUserRoles.SUPER_ADMIN) {
+      req.user.base_roles = {
+        [ProjectRoles.OWNER]: true,
+      };
+    }
+
     const roles: Record<string, boolean> = extractRolesObj(userScopeRole);
 
     if (req?.user?.is_api_token && blockApiTokenAccess) {
