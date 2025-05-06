@@ -490,7 +490,7 @@ export class FieldHandler implements IFieldHandler {
                 row,
                 baseModel: baseModel,
                 column,
-                options: params.options,
+                options: { ...params.options, fieldHandler: this },
               })
             ).value;
           }
@@ -501,7 +501,7 @@ export class FieldHandler implements IFieldHandler {
                 row,
                 baseModel: baseModel,
                 column,
-                options: params.options,
+                options: { ...params.options, fieldHandler: this },
               })
             ).value;
           } else if (
@@ -515,7 +515,7 @@ export class FieldHandler implements IFieldHandler {
                 row,
                 baseModel: baseModel,
                 column,
-                options: params.options,
+                options: { ...params.options, fieldHandler: this },
               })
             ).value;
             row[column.title] = value;
