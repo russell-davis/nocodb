@@ -74,7 +74,6 @@ export const lookupOrLtarBuilder =
           {
             const parentBaseModel = await Model.getBaseModelSQL(parentContext, {
               model: parentModel,
-              tableName: parentModel.table_name,
               dbDriver: baseModelSqlv2.dbDriver,
             });
 
@@ -98,7 +97,6 @@ export const lookupOrLtarBuilder =
           {
             const childBaseModel = await Model.getBaseModelSQL(childContext, {
               model: childModel,
-              tableName: childModel.table_name,
               dbDriver: baseModelSqlv2.dbDriver,
             });
             isArray = relation.type !== RelationTypes.ONE_TO_ONE;
@@ -122,7 +120,6 @@ export const lookupOrLtarBuilder =
           {
             const parentBaseModel = await Model.getBaseModelSQL(parentContext, {
               model: parentModel,
-              tableName: parentModel.table_name,
               dbDriver: baseModelSqlv2.dbDriver,
             });
             isArray = true;
