@@ -307,3 +307,69 @@ export const SyncTables = {
   COL_BUTTON: 'nc_col_button_v2',
   SYNC_CONFIGS: 'nc_sync_configs',
 };
+
+
+export const SyncTablePermissionMap = {
+  // Base metadata
+  [SyncTables.PROJECT]: 'baseGet',
+  [SyncTables.SOURCES]: 'baseGet',
+  [SyncTables.PROJECT_USERS]: 'baseUserList',
+
+  // Table-related metadata
+  [SyncTables.MODELS]: 'tableList',
+  [SyncTables.COLUMNS]: 'columnList',
+  [SyncTables.COL_RELATIONS]: 'relationList',
+  [SyncTables.COL_SELECT_OPTIONS]: 'columnList',
+  [SyncTables.COL_LOOKUP]: 'columnList',
+  [SyncTables.COL_ROLLUP]: 'columnList',
+  [SyncTables.COL_FORMULA]: 'columnList',
+  [SyncTables.COL_QRCODE]: 'columnList',
+  [SyncTables.COL_BARCODE]: 'columnList',
+  [SyncTables.COL_LONG_TEXT]: 'columnList',
+  [SyncTables.COL_BUTTON]: 'columnList',
+
+  // Filter-related metadata
+  [SyncTables.FILTER_EXP]: 'filterList',
+
+  // Sort-related metadata
+  [SyncTables.SORT]: 'sortList',
+
+  // Views-related metadata
+  [SyncTables.VIEWS]: 'viewList',
+  [SyncTables.MODEL_ROLE_VISIBILITY]: 'tableList',
+
+  // Form views
+  [SyncTables.FORM_VIEW]: 'formViewGet',
+  [SyncTables.FORM_VIEW_COLUMNS]: 'formViewGet',
+
+  // Gallery views
+  [SyncTables.GALLERY_VIEW]: 'galleryViewGet',
+  [SyncTables.GALLERY_VIEW_COLUMNS]: 'galleryViewGet',
+
+  // Calendar views
+  [SyncTables.CALENDAR_VIEW]: 'calendarViewGet',
+  [SyncTables.CALENDAR_VIEW_COLUMNS]: 'calendarViewGet',
+  [SyncTables.CALENDAR_VIEW_RANGE]: 'calendarViewGet',
+
+  // Grid views
+  [SyncTables.GRID_VIEW]: 'tableGet', // Grid view is essentially data view
+  [SyncTables.GRID_VIEW_COLUMNS]: 'tableGet',
+
+  // Kanban views
+  [SyncTables.KANBAN_VIEW]: 'kanbanViewGet',
+  [SyncTables.KANBAN_VIEW_COLUMNS]: 'kanbanViewGet',
+
+  // Map views
+  [SyncTables.MAP_VIEW]: 'tableGet', // No specific map permission, using dataList
+  [SyncTables.MAP_VIEW_COLUMNS]: 'tableGet',
+
+  // Integration-related metadata
+  [SyncTables.HOOKS]: 'hookTrigger',
+  [SyncTables.SYNC_CONFIGS]: 'baseGet',
+
+  // Extension-related metadata
+  [SyncTables.EXTENSIONS]: 'extensionList',
+
+  // Jobs-related metadata
+  [SyncTables.JOBS]: 'jobList'
+};
