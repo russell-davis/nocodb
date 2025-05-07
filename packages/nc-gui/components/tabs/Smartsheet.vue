@@ -34,6 +34,8 @@ const { activeView, openedViewsTab, activeViewTitleOrId } = storeToRefs(useViews
 const { isGallery, isGrid, isForm, isKanban, isLocked, isMap, isCalendar, xWhere, isActionPaneActive, actionPaneSize } =
   useProvideSmartsheetStore(activeView, meta)
 
+useViewRowColorProvider({ view: activeView })
+
 useSqlEditor()
 
 const reloadViewDataEventHook = createEventHook()
