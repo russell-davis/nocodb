@@ -35,7 +35,7 @@ import rolePermissions from '~/utils/acl';
 import { NcError } from '~/helpers/catchError';
 import { RootScopes } from '~/utils/globals';
 import { sourceRestrictions } from '~/utils/acl';
-import { Source } from '~/models';
+import { Source, MCPToken } from '~/models';
 
 export const rolesLabel = {
   [OrgUserRoles.SUPER_ADMIN]: 'Super Admin',
@@ -82,6 +82,17 @@ export class ExtractIdsMiddleware implements NestMiddleware, CanActivate {
     };
     req.ncApiVersion = context.api_version;
     // extract base id based on request path params
+
+    if (params.tokenId) {
+      const mcpToken = await MCPToken.get(context, params.tokenId);
+
+      if (!mcpToken) {
+        NcError.genericNotFound('MCPToken', params.tokenId);
+      }
+
+      req.ncBaseId = mcpToken.base_id;
+    }
+
     if (params.baseId || params.baseName) {
       const base = await Base.getByTitleOrId(
         context,
@@ -431,31 +442,22 @@ function getUserRoleForScope(user: any, scope: string) {
 export class AclMiddleware implements NestInterceptor {
   constructor(private reflector: Reflector) {}
 
-  async intercept(
+  async aclFn(
+    permissionName: string,
+    {
+      scope = 'base',
+      allowedRoles,
+      blockApiTokenAccess,
+      extendedScope,
+    }: {
+      scope?: string;
+      allowedRoles?: (OrgUserRoles | string)[];
+      blockApiTokenAccess?: boolean;
+      extendedScope?: string;
+    } = {},
     context: ExecutionContext,
-    next: CallHandler,
-  ): Promise<Observable<any>> {
-    const permissionName = this.reflector.get<string>(
-      'permission',
-      context.getHandler(),
-    );
-    const allowedRoles = this.reflector.get<(OrgUserRoles | string)[]>(
-      'allowedRoles',
-      context.getHandler(),
-    );
-    const blockApiTokenAccess = this.reflector.get<boolean>(
-      'blockApiTokenAccess',
-      context.getHandler(),
-    );
-
-    const scope = this.reflector.get<string>('scope', context.getHandler());
-    const extendedScope = this.reflector.get<string>(
-      'extendedScope',
-      context.getHandler(),
-    );
-
-    const req = context.switchToHttp().getRequest();
-
+    req,
+  ) {
     if (!req.user?.isAuthorized) {
       NcError.unauthorized('Invalid token');
     }
@@ -587,6 +589,44 @@ export class AclMiddleware implements NestInterceptor {
         NcError.sourceDataReadOnly(source.alias);
       }
     }
+  }
+
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
+    const permissionName = this.reflector.get<string>(
+      'permission',
+      context.getHandler(),
+    );
+    const allowedRoles = this.reflector.get<(OrgUserRoles | string)[]>(
+      'allowedRoles',
+      context.getHandler(),
+    );
+    const blockApiTokenAccess = this.reflector.get<boolean>(
+      'blockApiTokenAccess',
+      context.getHandler(),
+    );
+
+    const scope = this.reflector.get<string>('scope', context.getHandler());
+    const extendedScope = this.reflector.get<string>(
+      'extendedScope',
+      context.getHandler(),
+    );
+
+    const req = context.switchToHttp().getRequest();
+
+    await this.aclFn(
+      permissionName,
+      {
+        scope,
+        allowedRoles,
+        blockApiTokenAccess,
+        extendedScope,
+      },
+      context,
+      req,
+    );
 
     return next.handle().pipe(
       map((data) => {
