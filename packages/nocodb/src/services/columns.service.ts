@@ -3780,7 +3780,7 @@ export class ColumnsService implements IColumnsService {
           param.source.type === 'pg' ||
           (param.column as LinkToAnotherColumnReqType).virtual
         ) {
-          const indexName = generateFkName(parent, child);
+          const indexName = generateFkName(table, refTable);
           await this.createColumnIndex(context, {
             column: new Column({
               ...newColumn,
@@ -3883,7 +3883,7 @@ export class ColumnsService implements IColumnsService {
           param.source.type === 'pg' ||
           (param.column as LinkToAnotherColumnReqType).virtual
         ) {
-          const indexName = generateFkName(parent, child);
+          const indexName = generateFkName(table, refTable);
           await this.createColumnIndex(context, {
             column: new Column({
               ...newColumn,
