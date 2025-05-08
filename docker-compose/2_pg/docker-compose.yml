@@ -1,6 +1,7 @@
-version: '2.1'
+---
 services: 
   nocodb: 
+    container_name: nocodb
     depends_on: 
       root_db: 
         condition: service_healthy
@@ -8,11 +9,15 @@ services:
       NC_DB: "pg://root_db:5432?u=postgres&p=password&d=root_db"
     image: "nocodb/nocodb:latest"
     ports: 
-      - "8080:8080"
+      - "6001:8080"
     restart: always
     volumes: 
       - "nc_data:/usr/app/data"
+    networks:
+      n8n_nocodb_net:
   root_db: 
+    ports: 
+      - "6002:5432"
     environment: 
       POSTGRES_DB: root_db
       POSTGRES_PASSWORD: password
@@ -26,6 +31,14 @@ services:
     restart: always
     volumes: 
       - "db_data:/var/lib/postgresql/data"
+    networks:
+      n8n_nocodb_net:
+        aliases:
+          - nocodb-postgres
 volumes: 
   db_data: {}
   nc_data: {}
+
+networks:
+  n8n_nocodb_net:
+    external: true
