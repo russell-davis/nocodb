@@ -15716,7 +15716,8 @@
             "type": "string",
             "enum": [
               "v1",
-              "v2"
+              "v2",
+              "v3"
             ]
           },
           "name": "version",
@@ -23898,7 +23899,6 @@
                 "insert",
                 "update",
                 "delete",
-                "any",
                 "trigger"
               ],
               "type": "string"
