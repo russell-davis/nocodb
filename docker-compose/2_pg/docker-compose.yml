@@ -36,8 +36,8 @@ services:
         aliases:
           - nocodb-postgres
 volumes: 
-  db_data: {}
-  nc_data: {}
+  db_data:
+  nc_data:
 
 networks:
   n8n_nocodb_net:
