@@ -1072,7 +1072,6 @@ export async function getAffectedColumns(
     return undefined;
   }
   const compareSingle = (prev, next) => {
-    console.log(prev, next);
     const updatePayload = populateUpdatePayloadDiff({
       prev,
       next,
