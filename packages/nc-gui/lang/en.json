@@ -1304,7 +1304,8 @@
     "invoice": "Invoice",
     "status": "Status",
     "invoiceTotal": "Invoice Total",
-    "pastInvoices": "Past Invoices"
+    "pastInvoices": "Past Invoices",
+    "sendAllEvents": "Send all events"
   },
   "activity": {
     "clickToResolve": "Click to resolve",
