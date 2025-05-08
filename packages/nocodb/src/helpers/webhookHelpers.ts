@@ -1105,7 +1105,7 @@ export async function getAffectedColumns(
     model: Model;
   },
 ) {
-  if (hookName !== 'after.update') {
+  if (hookName !== 'after.update' && hookName !== 'after.bulkUpdate') {
     return undefined;
   }
   let affectedCols = [];
